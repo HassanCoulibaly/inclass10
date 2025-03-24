@@ -19,51 +19,97 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Create a Form widget.
 class MyCustomForm extends StatefulWidget {
   const MyCustomForm({super.key});
 
   @override
-  MyCustomFormState createState() {
-    return MyCustomFormState();
-  }
+  MyCustomFormState createState() => MyCustomFormState();
 }
 
-// Create a corresponding State class.
-// This class holds data related to the form.
 class MyCustomFormState extends State<MyCustomForm> {
-  // Create a global key that uniquely identifies the Form widget
-  // and allows validation of the form.
-  //
-  // Note: This is a GlobalKey<FormState>,
-  // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _dateController = TextEditingController();
+  final List headers = [
+    "mail",
+    "First Name",
+    "LastName",
+    "Phone Number",
+    "Age",
+  ];
+
+  @override
+  void dispose() {
+    _dateController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null) {
+      setState(() {
+        _dateController.text =
+            "${picked.toLocal()}".split(' ')[0]; // Format as YYYY-MM-DD
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Build a Form widget using the _formKey created above.
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextFormField(
-            // The validator receives the text that the user has entered.
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: ElevatedButton(
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Form(
+        key: _formKey,
+        child: ListView(
+          children: [
+            const Text(
+              "SIGN UP FORM",
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+
+            // Date Picker Field
+            TextFormField(
+              controller: _dateController,
+              decoration: const InputDecoration(
+                labelText: "Date of Birth",
+                border: OutlineInputBorder(),
+                suffixIcon: Icon(Icons.calendar_today),
+              ),
+              readOnly: true, // Prevents keyboard from appearing
+              onTap: () => _selectDate(context), // Show DatePicker on tap
+              validator:
+                  (value) =>
+                      value == null || value.isEmpty
+                          ? 'Please select a date'
+                          : null,
+            ),
+            const SizedBox(height: 16),
+
+            const SizedBox(height: 20),
+
+            // Other Form Fields
+            for (int i = 0; i < headers.length; i++) ...[
+              Text(headers[i], textAlign: TextAlign.start),
+              const SizedBox(height: 8),
+              TextFormField(
+                decoration: const InputDecoration(border: OutlineInputBorder()),
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Please enter some text'
+                            : null,
+              ),
+              const SizedBox(height: 16),
+            ],
+            ElevatedButton(
               onPressed: () {
-                // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
-                  // If the form is valid, display a snackbar. In the real world,
-                  // you'd often call a server or save the information in a database.
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Processing Data')),
                   );
@@ -71,8 +117,8 @@ class MyCustomFormState extends State<MyCustomForm> {
               },
               child: const Text('Submit'),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
