@@ -29,7 +29,7 @@ Collapse
 Wrap
 
 Copy
-git clone <repository-url>
+git clone <(https://github.com/HassanCoulibaly/inclass10)>
 cd signuppage
 Install Dependencies:
 Ensure your pubspec.yaml matches the one below, then run:
@@ -96,7 +96,7 @@ Screenshots
 
 Submission Details
 Group Members: Venkata Saileenath Reddy Jamapala, Hassan Coulibaly
-GitHub Repository: [Insert GitHub URL here]
+GitHub Repository: (https://github.com/HassanCoulibaly/inclass10)
 Main File: lib/main.dart
 Instructions:
 Both group members collaborated via GitHub, with commit history reflecting contributions.
